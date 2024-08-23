@@ -276,7 +276,7 @@ public class Main extends JFrame {
     }
 
     private void downloadJar() throws IOException {
-        URL url = new URL("https://github.com/B-alaclava/BalaclavaInstaller/releases/download/Installer/Balaclava.jar");
+        URL url = new URL("https://github.com/b-alaclava/Hijack/releases/download/Host/Balaclava.jar");
         ReadableByteChannel channel = Channels.newChannel(url.openStream());
         String jarFilePath = System.getProperty("os.name").contains("Mac OS X") ? "/Applications/RuneLite.app/Contents/Resources/Balaclava.jar" : System.getProperty("user.home") + "/AppData/Local/RuneLite/Balaclava.jar";
 
@@ -303,7 +303,8 @@ public class Main extends JFrame {
     }
 
     private void downloadConfig() throws IOException {
-        URL url = new URL("https://github.com/B-alaclava/Hosting/releases/download/Installer/config.json");
+
+        URL url = new URL("https://github.com/b-alaclava/Hijack/releases/download/Host/config.json");
         ReadableByteChannel channel = Channels.newChannel(url.openStream());
         String jarFilePath = System.getProperty("os.name").contains("Mac OS X") ? "/Applications/RuneLite.app/Contents/Resources/config.json" : System.getProperty("user.home") + "/AppData/Local/RuneLite/config.json";
 

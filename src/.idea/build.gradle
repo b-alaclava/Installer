@@ -1,0 +1,219 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.guardsquare:proguard-gradle:7.3.2'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'maven-publish'
+
+}
+
+
+repositories {
+    mavenLocal()
+    maven {
+        url = 'https://repo.runelite.net'
+    }
+    mavenCentral()
+    jcenter()
+}
+
+
+
+def runeLiteVersion = 'latest.release'
+//def runeLiteVersion = '1.10.37'
+
+
+dependencies {
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5' // Use the latest version
+    implementation 'org.json:json:20230227'
+
+
+    compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    testImplementation 'junit:junit:4.12'
+    testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
+    testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
+    implementation 'org.roaringbitmap:RoaringBitmap:0.9.44'
+    implementation("com.google.archivepatcher:archive-patch-applier:1.0.4")
+    implementation("org.benf:cfr:0.152")
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.6'
+
+}
+sourceSets {
+    main {
+
+        java {
+            srcDir "src"
+        }
+
+    }
+}
+
+group = 'com.example'
+version = '1.23'
+sourceCompatibility = "11"
+targetCompatibility = "11"
+
+task _PREMIUM(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.example.Main'
+    }
+    baseName = 'ToonZulrah'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude("com/example/DT2/**")
+    exclude("com/example/VORKATH/**")
+    exclude("com/example/TOA/**")
+    exclude("com/example/PRIVATE/**")
+    exclude("com/example/ZULRAH/**")
+
+
+
+    with jar
+}
+
+task _PRIVATE(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.example.Main'
+    }
+    baseName = 'ToonZulrah'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude("com/example/DT2/**")
+    exclude("com/example/VORKATH/**")
+    exclude("com/example/TOA/**")
+    exclude("com/example/PREMIUM/**")
+    exclude("com/example/ZULRAH/**")
+    with jar
+}
+
+task _TOA(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.example.Main'
+    }
+    baseName = 'ToonZulrah'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude("com/example/DT2/**")
+    exclude("com/example/PREMIUM/**")
+    exclude("com/example/VORKATH/**")
+    exclude("com/example/PRIVATE/**")
+    exclude("com/example/ZULRAH/**")
+    with jar
+}
+
+task _ZULRAH(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.example.Main'
+    }
+    baseName = 'ToonZulrah'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude("com/example/PREMIUM/**")
+    exclude("com/example/VORKATH/**")
+    exclude("com/example/TOA/**")
+    exclude("com/example/PRIVATE/**")
+    exclude("com/example/DT2/**")
+
+    with jar
+}
+
+
+task _DT2(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.example.Main'
+    }
+    baseName = 'ToonZulrah'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude("com/example/PREMIUM/**")
+    exclude("com/example/VORKATH/**")
+    exclude("com/example/TOA/**")
+    exclude("com/example/PRIVATE/**")
+    exclude("com/example/ZULRAH/**")
+
+    with jar
+}
+
+task _VORKATH(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.example.Main'
+    }
+    baseName = 'ToonZulrah'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    exclude("com/example/DT2/**")
+    exclude("com/example/PREMIUM/**")
+    exclude("com/example/TOA/**")
+    exclude("com/example/PRIVATE/**")
+    exclude("com/example/ZULRAH/**")
+    with jar
+}
+
+
+
+
+
+task _EVERYTHING(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.example.Main'
+    }
+    baseName = 'ToonZulrah'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    with jar
+}
+
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username 'admin'
+                password 'password'
+            }
+            url "http://baseUrl/artifactory/libs-release-local"
+        }
+    }
+}
+
+configurations {
+    runtime.extendsFrom(compileClasspath, compileOnly)
+}
+
+task copyToLib(type: Copy) {
+    into "$buildDir/output/lib"
+    from configurations.runtime
+}
+
+
+
+task proguard(type: proguard.gradle.ProGuardTask) {
+    configuration 'proguard.txt'
+
+    injars 'build/libs/ToonZulrah-1.23.jar'
+    outjars'/Users/matthew/.runelite/sideloaded-plugins/proguard-gradle-example.out.jar'
+
+
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+targetCompatibility = JavaVersion.VERSION_11
